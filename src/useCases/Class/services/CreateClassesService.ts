@@ -1,14 +1,10 @@
+import { IScheduleRepository } from "@useCases/Schedule/IScheduleRepository";
 import Schedule from "@useCases/Schedule/Schedule";
-import ScheduleRepository from "@useCases/Schedule/ScheduleRepository";
-import UserRepository from "@useCases/User/repositories/UserRepository";
-import ClassRepository from "../repositories/ClassRepository";
+import IUserRepository from "@useCases/User/repositories/IUserRepository";
+import IClassRepository from "../repositories/IClassRepository";
 
 // +  controller:  request.body
 // +  repository: alterar/obter/deletar/postar infos nele
-
-const classesRepository = new ClassRepository();
-const usersRepository = new UserRepository();
-const scheduleRepository = new ScheduleRepository();
 
 interface RequestBody {
     name: string,
@@ -20,7 +16,20 @@ interface RequestBody {
     schedule: Schedule[]
 };
 
-export default class CreateClassService {
+export default class CreateClassService {  
+    private classesRepository: IClassRepository;
+    private usersRepository: IUserRepository;
+    private scheduleRepository: IScheduleRepository;
+
+    constructor(
+        classesRepository: IClassRepository,
+        usersRepository: IUserRepository,
+        scheduleRepository: IScheduleRepository) {
+            this.classesRepository = classesRepository;
+            this.usersRepository = usersRepository;
+            this.scheduleRepository = scheduleRepository;
+        }
+    
     public async execute({
         name,
         avatar,
@@ -30,7 +39,7 @@ export default class CreateClassService {
         cost,
         schedule}: RequestBody ): Promise<number | null> {
 
-      const insertedUsersIds = await usersRepository.create({
+      const insertedUsersIds = await this.usersRepository.create({
           name,
           avatar,
           whatsapp,
@@ -39,7 +48,7 @@ export default class CreateClassService {
 
       const user_id = insertedUsersIds[0];
 
-      const insertedClassesIds = await classesRepository.create({
+      const insertedClassesIds = await this.classesRepository.create({
           subject,
           cost,
           user_id 
@@ -49,7 +58,7 @@ export default class CreateClassService {
   
       //TRATAMENTO DAS INFOS - REGRAS DE NEGOCIO
       const classSchedule = await schedule.map((scheduleItem:Schedule) => {
-          return scheduleRepository.create({
+          return this.scheduleRepository.create({
               class_id,
               week_day: scheduleItem.week_day,
               from: scheduleItem.from,

@@ -1,10 +1,17 @@
+import IClassRepository from "@useCases/Class/repositories/IClassRepository";
+import Connection from "../entities/Connection";
 import ConnectionRepository from "../respositories/ConnectionRepository";
+import { IConnectionsRepository } from "../respositories/IConnectionRepository";
 
-const connectionsRepository  = new ConnectionRepository();
+export default class CreateConnectionService {
+    private connectionsRepository: IConnectionsRepository;
 
- export default class CreateConnectionService {
-     public async execute(user_id: number): Promise<number[] | null> {
-        const connection = await connectionsRepository.create(user_id);
+    constructor(connectionsRepository:IConnectionsRepository) {
+        this.connectionsRepository = connectionsRepository;
+    };
+
+    public async execute(user_id: number): Promise<number[] | null> {
+        const connection = await this.connectionsRepository.create(user_id);
         return connection;
-    }
-}
+    };
+};

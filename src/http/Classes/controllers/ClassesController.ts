@@ -1,7 +1,7 @@
+import { classesRepository, scheduleRepository, usersRepository } from '@container';
 import CreateClassService from '@useCases/Class/services/CreateClassesService';
 import ListClassService from '@useCases/Class/services/ListClassesService';
 import { Request, Response } from 'express';
-
 
 // + Tratamento de request e response
 // + Tratamento de erros
@@ -17,7 +17,10 @@ export default class ClassesController {
         const time = filter.time as string;
 
         try {
-            const listClasses = new ListClassService();
+            const listClasses = new ListClassService(
+                classesRepository
+            );
+
             const classes = await listClasses.execute({ week_day, subject, time });
             return res.json(classes);
         
@@ -26,6 +29,7 @@ export default class ClassesController {
                 error: err.message
             });
         }
+        
     };
 
     async create(req: Request, res: Response) {
@@ -39,7 +43,11 @@ export default class ClassesController {
             schedule
         } = req.body;
 
-        const createClass = new CreateClassService();
+        const createClass = new CreateClassService(
+            classesRepository,
+            usersRepository,
+            scheduleRepository
+        );
 
         try { 
             const classes = await createClass.execute({
