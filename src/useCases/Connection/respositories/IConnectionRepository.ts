@@ -1,6 +1,5 @@
-import { QueryBuilder } from 'knex';
 
 export interface IConnectionsRepository {
-    create(user_id: number): Promise<QueryBuilder> ;
+    create(user_id: number): Promise<number[] | null>;
     count(): Promise<string | number>;
 };

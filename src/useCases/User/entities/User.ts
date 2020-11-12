@@ -1,5 +1,3 @@
-import { v4 } from 'uuid';
-
 interface UserInterface {
     id: string;
     name: string;

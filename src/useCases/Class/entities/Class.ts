@@ -1,4 +1,3 @@
-import { v4 } from "uuid";
 
 interface ClassInterface {
     id: string;
